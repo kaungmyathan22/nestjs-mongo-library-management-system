@@ -1,0 +1,3 @@
+type JWTPaylaod = {
+  email: string;
+};
