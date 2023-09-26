@@ -1,26 +1,32 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthenticationDto } from './dto/create-authentication.dto';
-import { UpdateAuthenticationDto } from './dto/update-authentication.dto';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import * as bcrypt from 'bcryptjs';
+import { UsersService } from 'src/users/users.service';
+import { LoginDTO } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
 
 @Injectable()
 export class AuthenticationService {
-  create(createAuthenticationDto: CreateAuthenticationDto) {
-    return 'This action adds a new authentication';
+  constructor(private readonly usersService: UsersService) {}
+  async register(payload: RegisterDto) {
+    return this.usersService.create(payload);
   }
-
-  findAll() {
-    return `This action returns all authentication`;
+  async login({ email, password }: LoginDTO) {
+    const user = await this.usersService.findByEmail(email);
+    if (!user) {
+      throw new UnauthorizedException('Invalid email / password');
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      throw new UnauthorizedException('Invalid email / password');
+    }
+    return user;
   }
-
-  findOne(id: number) {
-    return `This action returns a #${id} authentication`;
+  async logout() {
+    return { success: true };
   }
-
-  update(id: number, updateAuthenticationDto: UpdateAuthenticationDto) {
-    return `This action updates a #${id} authentication`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} authentication`;
-  }
+  // async changePassword() {
+  //   const user = await this.usersService.find
+  // }
+  // async deletAccount() {}
+  // async me() {}
 }

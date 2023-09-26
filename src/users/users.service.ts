@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
-import * as bcrypt from 'bcryptjs';
 import { Model } from 'mongoose';
 import { EnvironmentConstants } from 'src/common/constants/environment.constants';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -17,13 +16,9 @@ export class UsersService {
     @InjectModel(User.name) private UserModel: Model<User>,
     private readonly configService: ConfigService,
   ) {}
-  async create({ password, email }: CreateUserDto) {
+  async create(payload: CreateUserDto) {
     try {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const createdUserDocument = new this.UserModel({
-        email,
-        password: hashedPassword,
-      });
+      const createdUserDocument = new this.UserModel(payload);
       await createdUserDocument.save();
       return createdUserDocument;
     } catch (error) {
@@ -32,7 +27,7 @@ export class UsersService {
         +this.configService.get(EnvironmentConstants.DUPLICATE_ERROR_KEY)
       ) {
         throw new ConflictException(
-          `User with email(${email}) already exists.`,
+          `User with email(${payload.email}) already exists.`,
         );
       }
       throw error;
@@ -41,6 +36,10 @@ export class UsersService {
 
   findAll() {
     return this.UserModel.find();
+  }
+
+  findByEmail(email: string) {
+    return this.UserModel.findOne({ email });
   }
 
   async findOneOrFail(id: string) {

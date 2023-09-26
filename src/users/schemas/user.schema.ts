@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import * as bcrypt from 'bcryptjs';
 import { Exclude } from 'class-transformer';
 import { Document, HydratedDocument } from 'mongoose';
 
@@ -17,6 +18,10 @@ export class User extends Document {
   @Exclude()
   @Prop({ required: true })
   password: string;
+
+  async comparePassword(plainTextPassword: string) {
+    return await bcrypt.compare(plainTextPassword, this.password);
+  }
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
@@ -29,3 +34,14 @@ UserSchema.set('toJSON', {
     return ret;
   },
 });
+UserSchema.pre('save', async function () {
+  if (this.isModified(this.password) || this.isNew) {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
+});
+
+// UserSchema.method({
+//   validatePassword: async function (password) {
+//     return bcrypt.compareSync(password, this.password);
+//   },
+// });

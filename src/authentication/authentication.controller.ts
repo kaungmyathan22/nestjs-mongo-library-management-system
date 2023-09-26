@@ -1,34 +1,36 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Request } from 'express';
 import { AuthenticationService } from './authentication.service';
-import { CreateAuthenticationDto } from './dto/create-authentication.dto';
-import { UpdateAuthenticationDto } from './dto/update-authentication.dto';
+import { RegisterDto } from './dto/register.dto';
+import { LocalAuthGuard } from './guards/local.guard';
 
-@Controller('authentication')
+@Controller('api/v1/authentication')
 export class AuthenticationController {
   constructor(private readonly authenticationService: AuthenticationService) {}
 
-  @Post()
-  create(@Body() createAuthenticationDto: CreateAuthenticationDto) {
-    return this.authenticationService.create(createAuthenticationDto);
+  @Post('register')
+  register(@Body() payload: RegisterDto) {
+    return this.authenticationService.register(payload);
   }
-
-  @Get()
-  findAll() {
-    return this.authenticationService.findAll();
+  @Post('login')
+  @UseGuards(LocalAuthGuard)
+  login(@Req() req: Request) {
+    return req.user;
   }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authenticationService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthenticationDto: UpdateAuthenticationDto) {
-    return this.authenticationService.update(+id, updateAuthenticationDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authenticationService.remove(+id);
-  }
+  // @Patch('change-password')
+  // changePassword(@Body() payload: CreateAuthenticationDto) {
+  //   return this.authenticationService.create(payload);
+  // }
+  // @Get('me')
+  // me(@Body() payload: CreateAuthenticationDto) {
+  //   return this.authenticationService.create(payload);
+  // }
+  // @Get('logout')
+  // logout(@Body() payload: CreateAuthenticationDto) {
+  //   return this.authenticationService.create(payload);
+  // }
+  // @Delete('delete-account')
+  // deleteAccount(@Body() payload: CreateAuthenticationDto) {
+  //   return this.authenticationService.create(payload);
+  // }
 }
