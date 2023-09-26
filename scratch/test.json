@@ -1,0 +1,6 @@
+{
+  "_id": string
+  "user": string
+  "__v": 0,
+  "refreshToken": string
+}

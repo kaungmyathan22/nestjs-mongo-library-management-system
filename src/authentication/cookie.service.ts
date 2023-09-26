@@ -14,12 +14,25 @@ export class CookieService {
     );
     return `${cookieJwtKey}=${token}; HttpOnly; Path=/; Max-Age=${cookieJwtExpiresIn}`;
   }
-
+  getCookieWithJwtRefreshToken(refreshToken: string) {
+    const cookieRefreshJwtKey = this.configService.get(
+      EnvironmentConstants.COOKIE_REFRESH_JWT_KEY,
+    );
+    const cookieRefreshExpiresIn = +this.configService.get(
+      EnvironmentConstants.JWT_REFRESH_EXPIRES_IN,
+    );
+    return `${cookieRefreshJwtKey}=${refreshToken}; HttpOnly; Path=/; Max-Age=${cookieRefreshExpiresIn}`;
+  }
   getCookieForLogOut() {
     const cookieJwtKey = this.configService.get(
       EnvironmentConstants.COOKIE_JWT_ACCESS_KEY,
     );
-
-    return [`${cookieJwtKey}=; HttpOnly; Path=/; Max-Age=0`];
+    const cookieJwtRefreshKey = this.configService.get(
+      EnvironmentConstants.COOKIE_REFRESH_JWT_KEY,
+    );
+    return [
+      `${cookieJwtKey}=; HttpOnly; Path=/; Max-Age=0`,
+      `${cookieJwtRefreshKey}=; HttpOnly; Path=/; Max-Age=0`,
+    ];
   }
 }

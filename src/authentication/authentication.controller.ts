@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Patch,
   Post,
   Req,
@@ -15,13 +17,16 @@ import { AuthenticationService } from './authentication.service';
 import { CookieService } from './cookie.service';
 import { ChangePasswordDTO } from './dto/change-password.dto';
 import { RegisterDto } from './dto/register.dto';
+import JwtRefreshAuthenticationGuard from './guards/jwt-refresh.guard';
 import JwtAuthenticationGuard from './guards/jwt.guard';
 import { LocalAuthGuard } from './guards/local.guard';
+import { TokenService } from './token.service';
 
 @Controller('api/v1/authentication')
 export class AuthenticationController {
   constructor(
     private readonly authenticationService: AuthenticationService,
+    private readonly tokenService: TokenService,
     private readonly cookieService: CookieService,
   ) {}
 
@@ -33,11 +38,15 @@ export class AuthenticationController {
   @Post('login')
   @UseGuards(LocalAuthGuard)
   async login(@Req() req: Request, @CurrentUser() user: UserDocument) {
-    const token = await this.authenticationService.getAccessToken(
+    const token = await this.tokenService.getAccessToken(
+      req.user as UserDocument,
+    );
+    const refreshToken = await this.tokenService.getRefreshToken(
       req.user as UserDocument,
     );
     req.res.setHeader('Set-Cookie', [
       this.cookieService.getCookieWithJwtToken(token),
+      this.cookieService.getCookieWithJwtRefreshToken(refreshToken),
     ]);
     return { user, token };
   }
@@ -77,5 +86,18 @@ export class AuthenticationController {
     const result = await this.authenticationService.deleteAccount(user);
     req.res.setHeader('Set-Cookie', this.cookieService.getCookieForLogOut());
     return result;
+  }
+
+  @UseGuards(JwtRefreshAuthenticationGuard)
+  @HttpCode(HttpStatus.OK)
+  @Get('refresh')
+  async refresh(@Req() req: Request) {
+    const access_token = await this.tokenService.getAccessToken(
+      req.user as UserDocument,
+    );
+    const accessTokenCookie =
+      this.cookieService.getCookieWithJwtToken(access_token);
+    req.res.setHeader('Set-Cookie', accessTokenCookie);
+    return { access_token };
   }
 }
