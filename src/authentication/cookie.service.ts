@@ -14,4 +14,12 @@ export class CookieService {
     );
     return `${cookieJwtKey}=${token}; HttpOnly; Path=/; Max-Age=${cookieJwtExpiresIn}`;
   }
+
+  getCookieForLogOut() {
+    const cookieJwtKey = this.configService.get(
+      EnvironmentConstants.COOKIE_JWT_ACCESS_KEY,
+    );
+
+    return [`${cookieJwtKey}=; HttpOnly; Path=/; Max-Age=0`];
+  }
 }

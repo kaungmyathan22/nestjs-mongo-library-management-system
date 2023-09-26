@@ -66,6 +66,17 @@ export class UsersService {
     return updatedUser;
   }
 
+  async updatePassword(id: string, password: string) {
+    const updatedUser = await this.UserModel.findOneAndUpdate(
+      { _id: id },
+      { password },
+      {
+        new: true,
+      },
+    );
+    return updatedUser;
+  }
+
   async remove(id: string) {
     await Promise.all([
       await this.findOneOrFail(id),

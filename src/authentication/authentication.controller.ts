@@ -1,9 +1,18 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { Request } from 'express';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { UserDocument } from 'src/users/schemas/user.schema';
 import { AuthenticationService } from './authentication.service';
 import { CookieService } from './cookie.service';
+import { ChangePasswordDTO } from './dto/change-password.dto';
 import { RegisterDto } from './dto/register.dto';
 import JwtAuthenticationGuard from './guards/jwt.guard';
 import { LocalAuthGuard } from './guards/local.guard';
@@ -30,10 +39,16 @@ export class AuthenticationController {
     ]);
     return { user, token };
   }
-  // @Patch('change-password')
-  // changePassword(@Body() payload: CreateAuthenticationDto) {
-  //   return this.authenticationService.create(payload);
-  // }
+
+  @UseGuards(JwtAuthenticationGuard)
+  @Patch('change-password')
+  changePassword(
+    @Body() payload: ChangePasswordDTO,
+    @CurrentUser() user: UserDocument,
+  ) {
+    return this.authenticationService.changePassword(user, payload);
+  }
+
   @UseGuards(JwtAuthenticationGuard)
   @Get('me')
   me(@CurrentUser() user: UserDocument) {
@@ -41,7 +56,8 @@ export class AuthenticationController {
   }
   @UseGuards(JwtAuthenticationGuard)
   @Get('logout')
-  logout() {
+  logout(@Req() req: Request) {
+    req.res.setHeader('Set-Cookie', this.cookieService.getCookieForLogOut());
     return this.authenticationService.logout();
   }
   // @Delete('delete-account')
