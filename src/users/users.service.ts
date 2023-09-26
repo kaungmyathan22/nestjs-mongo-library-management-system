@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
+import * as bcrypt from 'bcryptjs';
 import { Model } from 'mongoose';
 import { EnvironmentConstants } from 'src/common/constants/environment.constants';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -67,12 +68,10 @@ export class UsersService {
   }
 
   async updatePassword(id: string, password: string) {
+    const hashedPassword = await bcrypt.hash(password, 10);
     const updatedUser = await this.UserModel.findOneAndUpdate(
       { _id: id },
-      { password },
-      {
-        new: true,
-      },
+      { password: hashedPassword },
     );
     return updatedUser;
   }

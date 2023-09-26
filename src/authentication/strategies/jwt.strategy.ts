@@ -19,7 +19,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
             configService.get(EnvironmentConstants.COOKIE_JWT_ACCESS_KEY)
           ];
         const headerToken = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
-        console.log({ headerToken, cookieToken });
         return headerToken || cookieToken;
       },
       ignoreExpiration: false,
@@ -28,7 +27,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: JWTPaylaod) {
-    console.log(payload);
     return this.userService.findByEmail(payload.email);
   }
 }

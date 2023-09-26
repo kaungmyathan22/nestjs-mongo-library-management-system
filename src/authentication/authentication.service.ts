@@ -42,7 +42,6 @@ export class AuthenticationService {
     user: UserDocument,
     { oldPassword, newPassword }: ChangePasswordDTO,
   ) {
-    console.log(user);
     const isOldPasswordCorrect = await bcrypt.compare(
       oldPassword,
       user.password,
@@ -53,6 +52,9 @@ export class AuthenticationService {
     await this.usersService.updatePassword(user.id, newPassword);
     return { success: true, message: 'Successfully changed the password.' };
   }
-  // async deletAccount() {}
-  // async me() {}
+
+  async deleteAccount(user: UserDocument) {
+    const result = await this.usersService.remove(user.id);
+    return { success: true };
+  }
 }

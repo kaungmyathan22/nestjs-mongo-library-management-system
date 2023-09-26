@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Patch,
   Post,
@@ -28,6 +29,7 @@ export class AuthenticationController {
   register(@Body() payload: RegisterDto) {
     return this.authenticationService.register(payload);
   }
+
   @Post('login')
   @UseGuards(LocalAuthGuard)
   async login(@Req() req: Request, @CurrentUser() user: UserDocument) {
@@ -43,9 +45,11 @@ export class AuthenticationController {
   @UseGuards(JwtAuthenticationGuard)
   @Patch('change-password')
   changePassword(
+    @Req() req: Request,
     @Body() payload: ChangePasswordDTO,
     @CurrentUser() user: UserDocument,
   ) {
+    req.res.setHeader('Set-Cookie', this.cookieService.getCookieForLogOut());
     return this.authenticationService.changePassword(user, payload);
   }
 
@@ -60,8 +64,9 @@ export class AuthenticationController {
     req.res.setHeader('Set-Cookie', this.cookieService.getCookieForLogOut());
     return this.authenticationService.logout();
   }
-  // @Delete('delete-account')
-  // deleteAccount(@Body() payload: CreateAuthenticationDto) {
-  //   return this.authenticationService.create(payload);
-  // }
+
+  @Delete('delete-account')
+  deleteAccount(@CurrentUser() user: UserDocument) {
+    return this.authenticationService.deleteAccount(user);
+  }
 }
