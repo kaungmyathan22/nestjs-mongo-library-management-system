@@ -44,13 +44,17 @@ export class AuthenticationController {
 
   @UseGuards(JwtAuthenticationGuard)
   @Patch('change-password')
-  changePassword(
+  async changePassword(
     @Req() req: Request,
     @Body() payload: ChangePasswordDTO,
     @CurrentUser() user: UserDocument,
   ) {
+    const result = await this.authenticationService.changePassword(
+      user,
+      payload,
+    );
     req.res.setHeader('Set-Cookie', this.cookieService.getCookieForLogOut());
-    return this.authenticationService.changePassword(user, payload);
+    return result;
   }
 
   @UseGuards(JwtAuthenticationGuard)
@@ -58,15 +62,20 @@ export class AuthenticationController {
   me(@CurrentUser() user: UserDocument) {
     return user;
   }
+
   @UseGuards(JwtAuthenticationGuard)
   @Get('logout')
-  logout(@Req() req: Request) {
+  async logout(@Req() req: Request) {
+    const result = await this.authenticationService.logout();
     req.res.setHeader('Set-Cookie', this.cookieService.getCookieForLogOut());
-    return this.authenticationService.logout();
+    return result;
   }
 
+  @UseGuards(JwtAuthenticationGuard)
   @Delete('delete-account')
-  deleteAccount(@CurrentUser() user: UserDocument) {
-    return this.authenticationService.deleteAccount(user);
+  async deleteAccount(@Req() req: Request, @CurrentUser() user: UserDocument) {
+    const result = await this.authenticationService.deleteAccount(user);
+    req.res.setHeader('Set-Cookie', this.cookieService.getCookieForLogOut());
+    return result;
   }
 }
