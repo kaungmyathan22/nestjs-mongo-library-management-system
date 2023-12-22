@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { CreateAuthorDTO } from '../dto/author/create-author.dto';
 import { AuthorService } from '../services/author.service';
 
@@ -8,5 +8,10 @@ export class AuthorController {
   @Post()
   createAuthor(@Body() createAuthorDTO: CreateAuthorDTO) {
     return this.authorService.createAuthor(createAuthorDTO);
+  }
+
+  @Get()
+  getAuthors(@Query() queryParams) {
+    return this.authorService.getAllAuthors(queryParams);
   }
 }

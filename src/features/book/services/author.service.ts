@@ -1,9 +1,10 @@
 import { ConflictException, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { EnvironmentConstants } from 'src/common/constants/environment.constants';
+import { PaginatedParamsDto } from 'src/common/dto/paginated-query.dto';
 import { CreateAuthorDTO } from '../dto/author/create-author.dto';
 import { AuthorRepository } from '../repositories/author.repository';
 import { AuthorDocument } from '../schemas/author.schema';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthorService {
@@ -28,5 +29,11 @@ export class AuthorService {
       }
       throw error;
     }
+  }
+  async getAllAuthors(queryParams: PaginatedParamsDto) {
+    const authors = await this.authorRepository.findAllWithPaginated(
+      queryParams,
+    );
+    return authors;
   }
 }

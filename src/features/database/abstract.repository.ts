@@ -8,6 +8,7 @@ import {
   Types,
   UpdateQuery,
 } from 'mongoose';
+import { PaginatedParamsDto } from 'src/common/dto/paginated-query.dto';
 
 export abstract class AbstractRepository<TDocument extends Document> {
   protected abstract readonly logger: Logger;
@@ -81,5 +82,26 @@ export abstract class AbstractRepository<TDocument extends Document> {
     const session = await this.connection.startSession();
     session.startTransaction();
     return session;
+  }
+  async findAllWithPaginated(
+    queryParams: PaginatedParamsDto,
+    filterQuery: FilterQuery<TDocument> = {},
+  ) {
+    const { page = 1, pageSize = 10 } = queryParams as PaginatedParamsDto;
+    const skip = (page - 1) * pageSize;
+    const [totalItems, documents] = await Promise.all([
+      this.model.countDocuments(filterQuery),
+      this.model.find(filterQuery).limit(pageSize).skip(skip).lean(),
+    ]);
+    const totalPages = Math.ceil(totalItems / pageSize);
+    return {
+      prevPage: page > 1 ? page - 1 : null,
+      nextPage: page >= totalPages ? null : +page + 1,
+      totalPages: +totalPages,
+      totalItems: +totalItems,
+      page: +page,
+      pageSize: +pageSize,
+      data: documents,
+    };
   }
 }
