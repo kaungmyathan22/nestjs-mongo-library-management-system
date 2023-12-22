@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
+import { Author } from './author.schema';
 
 export type BookDocument = HydratedDocument<Book>;
 
@@ -11,19 +12,20 @@ export type BookDocument = HydratedDocument<Book>;
 export class Book extends Document {
   @Prop()
   name: string;
-  @Prop()
+  @Prop({ type: Number, required: true })
   stockCount: number;
   @Prop()
   title: string;
   @Prop()
   description: string;
+  @Prop({ type: Types.ObjectId, ref: 'authors' })
+  author: Author;
 }
 
 export const BookSchema = SchemaFactory.createForClass(Book);
 BookSchema.set('toJSON', {
   virtuals: true,
   transform: (doc, ret, opt) => {
-    delete ret.password;
     ret.id = ret._id;
     delete ret._id;
     return ret;
