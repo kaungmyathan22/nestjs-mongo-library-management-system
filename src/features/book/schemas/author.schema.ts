@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { Document, HydratedDocument } from 'mongoose';
 
 export type AuthorDocument = HydratedDocument<Author>;
 
@@ -10,7 +10,7 @@ export type AuthorDocument = HydratedDocument<Author>;
   collection: 'authors',
 })
 export class Author extends Document {
-  @Prop({ type: String, required: true })
+  @Prop({ type: String, required: true, unique: true })
   name: string;
   @Prop({ type: Date })
   birthDay: Date;
