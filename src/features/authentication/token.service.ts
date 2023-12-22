@@ -5,7 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcryptjs';
 import { Model, Types } from 'mongoose';
 import { EnvironmentConstants } from 'src/common/constants/environment.constants';
-import { UserDocument } from 'src/users/schemas/user.schema';
+import { UserDocument } from 'src/features/users/schemas/user.schema';
 import { RefreshToken } from './schemas/refresh-token.schema';
 
 @Injectable()

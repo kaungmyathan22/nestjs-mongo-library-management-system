@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as bcrypt from 'bcryptjs';
 import { Types } from 'mongoose';
-import { User } from 'src/users/schemas/user.schema';
+import { User } from 'src/features/users/schemas/user.schema';
 
 @Schema()
 export class RefreshToken {

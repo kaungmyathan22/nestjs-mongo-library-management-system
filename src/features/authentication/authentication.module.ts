@@ -3,7 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { EnvironmentConstants } from 'src/common/constants/environment.constants';
-import { UsersModule } from 'src/users/users.module';
+import { UsersModule } from 'src/features/users/users.module';
 import { AuthenticationController } from './authentication.controller';
 import { AuthenticationService } from './authentication.service';
 import { CookieService } from './cookie.service';

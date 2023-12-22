@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
-import { UserDocument } from 'src/users/schemas/user.schema';
+import { UserDocument } from 'src/features/users/schemas/user.schema';
 import { AuthenticationService } from './authentication.service';
 import { CookieService } from './cookie.service';
 import { ChangePasswordDTO } from './dto/change-password.dto';
