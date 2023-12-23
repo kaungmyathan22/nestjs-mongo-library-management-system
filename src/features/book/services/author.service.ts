@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { EnvironmentConstants } from 'src/common/constants/environment.constants';
 import { PaginatedParamsDto } from 'src/common/dto/paginated-query.dto';
 import { CreateAuthorDTO } from '../dto/author/create-author.dto';
+import { UpdateAuthorDTO } from '../dto/author/update-author.dto';
 import { AuthorRepository } from '../repositories/author.repository';
 import { AuthorDocument } from '../schemas/author.schema';
 
@@ -35,5 +36,37 @@ export class AuthorService {
       queryParams,
     );
     return authors;
+  }
+
+  async getAuthorById(id: string) {
+    const author = await this.authorRepository.findOne(
+      {
+        _id: id,
+      },
+      'Author with given id not found.',
+    );
+    return author;
+  }
+  async updateAuthor(id: string, payload: UpdateAuthorDTO) {
+    try {
+      console.log('updpating author');
+      const author = await this.getAuthorById(id);
+      console.log(author);
+      const result = await this.authorRepository.findOneAndUpdate(
+        { _id: id },
+        payload,
+      );
+      return result;
+    } catch (error) {
+      if (
+        error.code ===
+        +this.configService.get(EnvironmentConstants.DUPLICATE_ERROR_KEY)
+      ) {
+        throw new ConflictException(
+          `Author with name(${payload.name}) already exists.`,
+        );
+      }
+      throw error;
+    }
   }
 }
