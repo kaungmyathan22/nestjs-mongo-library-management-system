@@ -6,12 +6,14 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
+import { ObjectIdValidationPipe } from 'src/common/pipes/object-id-validation.pipe';
 import { CreateBorrowerDto } from '../dto/create-borrower.dto';
 import { UpdateBorrowerDto } from '../dto/update-borrower.dto';
 import { BorrowersService } from '../services/borrowers.service';
 
-@Controller('borrowers')
+@Controller('api/v1/borrowers')
 export class BorrowersController {
   constructor(private readonly borrowersService: BorrowersService) {}
 
@@ -21,25 +23,25 @@ export class BorrowersController {
   }
 
   @Get()
-  findAll() {
-    return this.borrowersService.findAll();
+  findAll(@Query() queryParams) {
+    return this.borrowersService.findAll(queryParams);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.borrowersService.findOne(+id);
+  findOne(@Param('id', ObjectIdValidationPipe) id: string) {
+    return this.borrowersService.findOne(id);
   }
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param('id', ObjectIdValidationPipe) id: string,
     @Body() updateBorrowerDto: UpdateBorrowerDto,
   ) {
-    return this.borrowersService.update(+id, updateBorrowerDto);
+    return this.borrowersService.update(id, updateBorrowerDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.borrowersService.remove(+id);
+  remove(@Param('id', ObjectIdValidationPipe) id: string) {
+    return this.borrowersService.remove(id);
   }
 }

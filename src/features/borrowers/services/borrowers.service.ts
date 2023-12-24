@@ -1,26 +1,61 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { EnvironmentConstants } from 'src/common/constants/environment.constants';
+import { PaginatedParamsDto } from 'src/common/dto/paginated-query.dto';
 import { CreateBorrowerDto } from '../dto/create-borrower.dto';
 import { UpdateBorrowerDto } from '../dto/update-borrower.dto';
+import { BorrowerRepository } from '../repositories/book.repository';
 
 @Injectable()
 export class BorrowersService {
-  create(createBorrowerDto: CreateBorrowerDto) {
-    return 'This action adds a new borrower';
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly borrowerRepository: BorrowerRepository,
+  ) {}
+
+  async create(payload: CreateBorrowerDto) {
+    try {
+      return await this.borrowerRepository.create({
+        ...payload,
+      } as any);
+    } catch (error) {
+      if (
+        error.code ===
+        +this.configService.get(EnvironmentConstants.DUPLICATE_ERROR_KEY)
+      ) {
+        throw new ConflictException(
+          `Borrower with name(${payload.name}) already exists.`,
+        );
+      }
+      throw error;
+    }
   }
 
-  findAll() {
-    return `This action returns all borrowers`;
+  findAll(queryParams: PaginatedParamsDto) {
+    return this.borrowerRepository.findAllWithPaginated(queryParams);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} borrower`;
+  async findOne(id: string) {
+    const borrower = await this.borrowerRepository.findOne(
+      {
+        _id: id,
+      },
+      'Borrower with given id not found.',
+    );
+    return borrower;
   }
 
-  update(id: number, updateBorrowerDto: UpdateBorrowerDto) {
-    return `This action updates a #${id} borrower`;
+  async update(id: string, updateBorrowerDto: UpdateBorrowerDto) {
+    const borrower = await this.findOne(id);
+    return this.borrowerRepository.findOneAndUpdate(
+      { id: borrower.id },
+      { ...updateBorrowerDto },
+    );
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} borrower`;
+  async remove(id: string) {
+    const borrower = await this.findOne(id);
+    await this.borrowerRepository.remove({ _id: borrower._id });
+    return { success: true };
   }
 }
