@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types } from 'mongoose';
+import { Document, HydratedDocument, Types } from 'mongoose';
 import { Author } from './author.schema';
 
 export type BookDocument = HydratedDocument<Book>;
@@ -10,7 +10,7 @@ export type BookDocument = HydratedDocument<Book>;
   id: true,
 })
 export class Book extends Document {
-  @Prop()
+  @Prop({ unique: true })
   name: string;
   @Prop({ type: Number, required: true })
   stockCount: number;
