@@ -75,4 +75,20 @@ export class BookService {
     await this.bookRepository.remove({ _id: book._id });
     return { success: true };
   }
+
+  async lentBook(id: string) {
+    const book = await this.findOne(id);
+    return this.bookRepository.findOneAndUpdate(
+      { id: book.id },
+      { stockCount: book.stockCount - 1 },
+    );
+  }
+
+  async returnBook(id: string) {
+    const book = await this.findOne(id);
+    return this.bookRepository.findOneAndUpdate(
+      { id: book.id },
+      { stockCount: book.stockCount + 1 },
+    );
+  }
 }
