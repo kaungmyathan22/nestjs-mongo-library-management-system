@@ -5,12 +5,14 @@ import { PaginatedParamsDto } from 'src/common/dto/paginated-query.dto';
 import { CreateAuthorDTO } from '../dto/author/create-author.dto';
 import { UpdateAuthorDTO } from '../dto/author/update-author.dto';
 import { AuthorRepository } from '../repositories/author.repository';
+import { BookRepository } from '../repositories/book.repository';
 import { AuthorDocument } from '../schemas/author.schema';
 
 @Injectable()
 export class AuthorService {
   constructor(
     private readonly authorRepository: AuthorRepository,
+    private readonly bookRepository: BookRepository,
     private readonly configService: ConfigService,
   ) {}
   async createAuthor(payload: CreateAuthorDTO) {
@@ -47,6 +49,7 @@ export class AuthorService {
     );
     return author;
   }
+
   async updateAuthor(id: string, payload: UpdateAuthorDTO) {
     try {
       await this.getAuthorById(id);
@@ -66,5 +69,12 @@ export class AuthorService {
       }
       throw error;
     }
+  }
+
+  async getBooksOfAuthor(id: string, queryParams: PaginatedParamsDto) {
+    const books = await this.bookRepository.findAllWithPaginated(queryParams, {
+      author: id,
+    });
+    return books;
   }
 }

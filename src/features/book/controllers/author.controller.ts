@@ -37,4 +37,12 @@ export class AuthorController {
   ) {
     return this.authorService.updateAuthor(id, payload);
   }
+
+  @Get(':id/books')
+  getBooksOfAuthor(
+    @Param('id', ObjectIdValidationPipe) id: string,
+    @Query() queryParams,
+  ) {
+    return this.authorService.getBooksOfAuthor(id, queryParams);
+  }
 }
