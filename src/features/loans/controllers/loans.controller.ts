@@ -37,6 +37,6 @@ export class LoansController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.loansService.remove(+id);
+    return this.loansService.remove(id);
   }
 }

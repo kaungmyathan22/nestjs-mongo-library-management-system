@@ -39,8 +39,15 @@ export class LoansService {
     return this.bookLoanRepository.findOne({ _id: id });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} loan`;
+  async remove(id: string) {
+    const loans = await this.findOne(id);
+    await Promise.all([
+      this.bookLoanRepository.remove({ _id: loans._id }),
+      this.bookService.returnBook(loans.book),
+    ]);
+    return {
+      message: 'Successfully deleted loan book',
+    };
   }
 
   async returnBook(id: string) {

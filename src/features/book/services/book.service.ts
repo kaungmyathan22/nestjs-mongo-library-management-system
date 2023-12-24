@@ -63,9 +63,9 @@ export class BookService {
   }
 
   async update(id: string, updateBookDto: UpdateBookDto) {
-    const product = await this.findOne(id);
+    const book = await this.findOne(id);
     return this.bookRepository.findOneAndUpdate(
-      { id: product.id },
+      { id: book.id },
       { ...updateBookDto },
     );
   }
