@@ -40,7 +40,16 @@ export class BookService {
   }
 
   findAll(queryParams: PaginatedParamsDto) {
-    return this.bookRepository.findAllWithPaginated(queryParams);
+    let filter = {};
+    if (queryParams.query) {
+      filter = {
+        $or: [
+          { name: { $regex: queryParams.query, $options: 'i' } },
+          { description: { $regex: queryParams.query, $options: 'i' } },
+        ],
+      };
+    }
+    return this.bookRepository.findAllWithPaginated(queryParams, filter);
   }
 
   async findOne(id: string) {
