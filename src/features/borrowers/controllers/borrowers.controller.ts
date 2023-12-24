@@ -1,7 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { BorrowersService } from './borrowers.service';
-import { CreateBorrowerDto } from './dto/create-borrower.dto';
-import { UpdateBorrowerDto } from './dto/update-borrower.dto';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
+import { CreateBorrowerDto } from '../dto/create-borrower.dto';
+import { UpdateBorrowerDto } from '../dto/update-borrower.dto';
+import { BorrowersService } from '../services/borrowers.service';
 
 @Controller('borrowers')
 export class BorrowersController {
@@ -23,7 +31,10 @@ export class BorrowersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBorrowerDto: UpdateBorrowerDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateBorrowerDto: UpdateBorrowerDto,
+  ) {
     return this.borrowersService.update(+id, updateBorrowerDto);
   }
 

@@ -6,9 +6,9 @@ import { AppService } from './app.service';
 import { CookieMiddleware } from './common/middlewares/cookie.middleware';
 import { AuthenticationModule } from './features/authentication/authentication.module';
 import { BookModule } from './features/book/book.module';
+import { BorrowersModule } from './features/borrowers/borrowers.module';
 import { DatabaseModule } from './features/database/database.module';
 import { UsersModule } from './features/users/users.module';
-import { BorrowersModule } from './feature/borrowers/borrowers.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
