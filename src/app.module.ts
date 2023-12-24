@@ -8,8 +8,8 @@ import { AuthenticationModule } from './features/authentication/authentication.m
 import { BookModule } from './features/book/book.module';
 import { BorrowersModule } from './features/borrowers/borrowers.module';
 import { DatabaseModule } from './features/database/database.module';
+import { LoansModule } from './features/loans/loans.module';
 import { UsersModule } from './features/users/users.module';
-import { LoansModule } from './feature/loans/loans.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
