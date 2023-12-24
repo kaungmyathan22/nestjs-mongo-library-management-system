@@ -8,6 +8,7 @@ import { AuthenticationModule } from './features/authentication/authentication.m
 import { BookModule } from './features/book/book.module';
 import { DatabaseModule } from './features/database/database.module';
 import { UsersModule } from './features/users/users.module';
+import { BorrowersModule } from './feature/borrowers/borrowers.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -33,6 +34,7 @@ import { UsersModule } from './features/users/users.module';
     AuthenticationModule,
     DatabaseModule,
     BookModule,
+    BorrowersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
