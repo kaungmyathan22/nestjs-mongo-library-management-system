@@ -49,7 +49,6 @@ export abstract class AbstractRepository<TDocument extends Document> {
     update: UpdateQuery<TDocument>,
   ) {
     const document = await this.model.findOneAndUpdate(filterQuery, update, {
-      lean: true,
       new: true,
     });
 
@@ -93,7 +92,7 @@ export abstract class AbstractRepository<TDocument extends Document> {
     const skip = (page - 1) * pageSize;
     const [totalItems, documents] = await Promise.all([
       this.model.countDocuments(filterQuery),
-      this.model.find(filterQuery).limit(pageSize).skip(skip).lean(),
+      this.model.find(filterQuery).limit(pageSize).skip(skip),
     ]);
     const totalPages = Math.ceil(totalItems / pageSize);
     return {
