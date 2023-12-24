@@ -24,5 +24,6 @@ import { BookService } from './services/book.service';
   ],
   controllers: [BookController, AuthorController],
   providers: [BookService, AuthorService, AuthorRepository, BookRepository],
+  exports: [BookService],
 })
 export class BookModule {}
