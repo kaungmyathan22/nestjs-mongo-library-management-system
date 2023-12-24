@@ -9,6 +9,7 @@ import { BookModule } from './features/book/book.module';
 import { BorrowersModule } from './features/borrowers/borrowers.module';
 import { DatabaseModule } from './features/database/database.module';
 import { UsersModule } from './features/users/users.module';
+import { LoansModule } from './feature/loans/loans.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -35,6 +36,7 @@ import { UsersModule } from './features/users/users.module';
     DatabaseModule,
     BookModule,
     BorrowersModule,
+    LoansModule,
   ],
   controllers: [AppController],
   providers: [AppService],
