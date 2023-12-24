@@ -49,7 +49,7 @@ export class AuthorService {
   }
   async updateAuthor(id: string, payload: UpdateAuthorDTO) {
     try {
-      const author = await this.getAuthorById(id);
+      await this.getAuthorById(id);
       const result = await this.authorRepository.findOneAndUpdate(
         { _id: id },
         payload,
