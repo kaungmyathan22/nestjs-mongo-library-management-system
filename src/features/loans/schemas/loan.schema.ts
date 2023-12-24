@@ -1,7 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, HydratedDocument, Types } from 'mongoose';
-import { Book } from 'src/features/book/schemas/book.schema';
-import { Borrower } from 'src/features/borrowers/schemas/borrower.schema';
 
 export type BookLoanDocument = HydratedDocument<BookLoan>;
 
@@ -14,9 +12,9 @@ export const LOAN_STATUS_ENUM = ['LENT', 'RETURNED'];
 })
 export class BookLoan extends Document {
   @Prop({ type: Types.ObjectId, ref: 'borrowers' })
-  borrower: Borrower;
+  borrower: string;
   @Prop({ type: Types.ObjectId, ref: 'books' })
-  book: Book;
+  book: string;
   @Prop({ required: true, type: Date })
   loanDate: Date;
   @Prop({ required: true, enum: LOAN_STATUS_ENUM, type: String })

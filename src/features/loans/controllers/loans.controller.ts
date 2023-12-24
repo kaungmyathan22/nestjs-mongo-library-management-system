@@ -6,9 +6,9 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { CreateLoanDto } from '../dto/create-loan.dto';
-import { UpdateLoanDto } from '../dto/update-loan.dto';
 import { LoansService } from '../services/loans.service';
 
 @Controller('api/v1/book-loans')
@@ -21,18 +21,18 @@ export class LoansController {
   }
 
   @Get()
-  findAll() {
-    return this.loansService.findAll();
+  findAll(@Query() queryParams) {
+    return this.loansService.findAll(queryParams);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.loansService.findOne(+id);
+    return this.loansService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLoanDto: UpdateLoanDto) {
-    return this.loansService.update(+id, updateLoanDto);
+  @Patch(':id/return')
+  returnBook(@Param('id') id: string) {
+    return this.loansService.returnBook(id);
   }
 
   @Delete(':id')

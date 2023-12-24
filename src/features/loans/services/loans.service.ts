@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { PaginatedParamsDto } from 'src/common/dto/paginated-query.dto';
 import { BookService } from 'src/features/book/services/book.service';
 import { BorrowersService } from 'src/features/borrowers/services/borrowers.service';
 import { CreateLoanDto, StatusEnum } from '../dto/create-loan.dto';
-import { UpdateLoanDto } from '../dto/update-loan.dto';
 import { BookLoanRepository } from '../repository/loan.repository';
 
 @Injectable()
@@ -31,19 +31,29 @@ export class LoansService {
     return result;
   }
 
-  findAll() {
-    return `This action returns all loans`;
+  findAll(queryParams: PaginatedParamsDto) {
+    return this.bookLoanRepository.findAllWithPaginated(queryParams);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} loan`;
-  }
-
-  update(id: number, updateLoanDto: UpdateLoanDto) {
-    return `This action updates a #${id} loan`;
+  findOne(id: string) {
+    return this.bookLoanRepository.findOne({ _id: id });
   }
 
   remove(id: number) {
     return `This action removes a #${id} loan`;
+  }
+
+  async returnBook(id: string) {
+    const loans = await this.findOne(id);
+    await Promise.all([
+      this.bookLoanRepository.findOneAndUpdate(
+        { _id: id },
+        { status: StatusEnum.RETURNED },
+      ),
+      this.bookService.returnBook(loans.book),
+    ]);
+    return {
+      message: 'Successfully returned book',
+    };
   }
 }
